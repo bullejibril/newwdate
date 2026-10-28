@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will you go on a date with me?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf3f5; --card:rgba(255,255,255,.82); --ink:#6b1f45; --soft:#a07088;
+  --pink:#f6a6bd; --pink-d:#e9809f; --lav:#d9c8f2; --tile:#f3e8f7; --line:#efd3de;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#2a1220;--card:rgba(58,26,45,.85);--ink:#ffd9e6;--soft:#c79bb1;--pink:#d9708f;--pink-d:#ee8aa8;--lav:#7a5aa6;--tile:#4a2a52;--line:#6b3a55}
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;display:grid;place-items:center;overflow:hidden;padding:16px}
+#petals{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.petal{position:absolute;top:-24px;width:12px;height:12px;border-radius:70% 0 70% 0;background:var(--pink);opacity:.75;animation:fall linear forwards}
+@keyframes fall{to{transform:translate(var(--dx),110vh) rotate(540deg)}}
+.card{position:relative;width:min(440px,100%);min-height:380px;background:var(--card);border:1px solid var(--line);border-radius:28px;padding:32px 24px;text-align:center;backdrop-filter:blur(6px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.screen{display:none;flex-direction:column;align-items:center;gap:16px;width:100%}
+.screen.on{display:flex;animation:pop .35s ease-out}
+@keyframes pop{from{opacity:0;transform:scale(.96)}}
+.pic{width:104px;height:104px;border-radius:26px;background:var(--tile);display:grid;place-items:center;font-size:58px}
+.pic.round{border-radius:50%;width:120px;height:120px;font-size:64px}
+h1{font-family:"Baloo 2",system-ui,sans-serif;font-weight:800;font-size:clamp(24px,6vw,30px);line-height:1.15;margin:0}
+h1.big{font-size:clamp(28px,8vw,38px);text-transform:uppercase}
+p.small{margin:0;font-size:14px;color:var(--soft);max-width:34ch}
+.row{display:flex;gap:14px;justify-content:center;align-items:center;min-height:52px;flex-wrap:wrap}
+button,select,input{font:inherit}
+.btn{border:0;border-radius:999px;padding:12px 26px;font-weight:700;color:var(--ink);background:var(--pink);cursor:pointer;transition:transform .15s,background .15s}
+.btn:hover{background:var(--pink-d);transform:translateY(-1px)}
+.btn.alt{background:var(--lav)}
+.btn.wide{width:100%}
+#no{position:relative}
+#no.run{position:fixed;z-index:5;transition:left .18s,top .18s}
+.field{width:100%;text-align:left;display:grid;gap:6px;font-weight:700;font-size:14px}
+.field input,.field select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%}
+@media(min-width:420px){.grid{grid-template-columns:repeat(3,1fr)}}
+.food{border:0;border-radius:18px;background:var(--tile);color:var(--ink);padding:14px 6px;font-weight:700;cursor:pointer;display:grid;gap:4px;justify-items:center;transition:transform .15s}
+.food span{font-size:30px}
+.food:hover{transform:translateY(-3px)}
+.sum{font-weight:700;color:var(--ink);background:var(--tile);border-radius:14px;padding:10px 16px;font-size:15px}
+:focus-visible{outline:3px solid var(--pink-d);outline-offset:3px}
+@media(prefers-reduced-motion:reduce){.petal{display:none}.screen.on{animation:none}}
+</style>
+</head>
+<body>
+<div id="petals" aria-hidden="true"></div>
+<main class="card">
+
+  <section class="screen on" id="s1">
+    <div class="pic" id="avatar1">🐶</div>
+    <h1>🌸 Will you go on a date with me? 🌸</h1>
+    <div class="row">
+      <button class="btn" id="yes">YES ✔</button>
+      <button class="btn alt" id="no">no 🥺</button>
+    </div>
+  </section>
+
+  <section class="screen" id="s2">
+    <div class="pic" id="avatar2">🕺</div>
+    <h1 class="big">Wait, you actually said yes?? 🤭</h1>
+    <p class="small">I was so ready for you to say no 😅</p>
+    <button class="btn" data-go="s3">okay okay →</button>
+  </section>
+
+  <section class="screen" id="s3">
+    <div class="pic" style="background:none">📆🐾</div>
+    <h1>So… when are you free?</h1>
+    <label class="field">Pick a day
+      <input type="date" id="day">
+    </label>
+    <label class="field">What time?
+      <select id="time">
+        <option value="" disabled selected>Select a time…</option>
+        <option>5:00 PM — early, so we beat the crowd</option>
+        <option>6:00 PM — the right answer</option>
+        <option>7:00 PM — you're making me hungry already</option>
+        <option>9:00 PM — dinner or breakfast?</option>
+      </select>
+    </label>
+    <button class="btn wide" id="setDate">Set the date! ♥</button>
+    <p class="small" id="err" role="alert"></p>
+  </section>
+
+  <section class="screen" id="s4">
+    <h1>What are we feeling? 🍜✨</h1>
+    <div class="grid" id="foods"></div>
+  </section>
+
+  <section class="screen" id="s5">
+    <div class="pic round" id="avatar3">😎</div>
+    <h1 id="finalLine"></h1>
+    <div class="sum" id="summary"></div>
+    <p class="small" id="ps"></p>
+  </section>
+
+</main>
+
+<script>
+// ✏️ Make it yours: change the text and emoji here
+const CONFIG = {
+  finalLine: "glad you didn't say no. be ready by 6, I'm coming to get you 🚗",
+  ps: "P.S. normal people text. I made a website during lunch. for you. no big deal.",
+  foods: [["🍕","Pizza"],["🍣","Sushi"],["🍔","Burgers"],["🍝","Pasta"],["🌮","Tacos"],["🍜","Ramen"]]
+};
+
+const $ = id => document.getElementById(id);
+const show = id => {
+  document.querySelectorAll('.screen').forEach(s => s.classList.toggle('on', s.id === id));
+  burst(14);
+};
+const pick = {};
+
+// falling petals
+function petal(){
+  const p = document.createElement('i');
+  p.className = 'petal';
+  p.style.left = Math.random()*100 + 'vw';
+  p.style.setProperty('--dx', (Math.random()*120 - 60) + 'px');
+  p.style.animationDuration = (6 + Math.random()*6) + 's';
+  p.style.transform = 'scale(' + (.6 + Math.random()*.9) + ')';
+  $('petals').appendChild(p);
+  setTimeout(() => p.remove(), 13000);
+}
+function burst(n){ for(let i=0;i<n;i++) setTimeout(petal, i*90); }
+setInterval(petal, 700); burst(10);
+
+// screen 1: the "no" button runs away
+const no = $('no');
+function dodge(e){
+  e.preventDefault();
+  const w = no.offsetWidth, h = no.offsetHeight, m = 12;
+  no.classList.add('run');
+  no.style.left = (m + Math.random()*(innerWidth - w - 2*m)) + 'px';
+  no.style.top  = (m + Math.random()*(innerHeight - h - 2*m)) + 'px';
+}
+no.addEventListener('pointerenter', dodge);
+no.addEventListener('pointerdown', dodge);
+no.addEventListener('click', dodge);
+no.addEventListener('focus', dodge);
+$('yes').onclick = () => { no.classList.remove('run'); show('s2'); };
+
+// generic "next" buttons
+document.querySelectorAll('[data-go]').forEach(b => b.onclick = () => show(b.dataset.go));
+
+// screen 3: day and time
+const today = new Date(); today.setMinutes(today.getMinutes() - today.getTimezoneOffset());
+$('day').min = today.toISOString().slice(0,10);
+$('setDate').onclick = () => {
+  if (!$('day').value || !$('time').value){
+    $('err').textContent = 'Pick a day and a time first.';
+    return;
+  }
+  $('err').textContent = '';
+  pick.day = new Date($('day').value + 'T12:00').toLocaleDateString(undefined, {weekday:'long', day:'numeric', month:'long'});
+  pick.time = $('time').value.split(' — ')[0];
+  show('s4');
+};
+
+// screen 4: food
+CONFIG.foods.forEach(([emoji, name]) => {
+  const b = document.createElement('button');
+  b.className = 'food';
+  b.innerHTML = '<span>' + emoji + '</span>' + name;
+  b.onclick = () => {
+    pick.food = emoji + ' ' + name;
+    $('finalLine').textContent = CONFIG.finalLine;
+    $('ps').textContent = CONFIG.ps;
+    $('summary').textContent = pick.day + ' · ' + pick.time + ' · ' + pick.food;
+    show('s5'); burst(30);
+  };
+  $('foods').appendChild(b);
+});
+</script>
+</body>
+</html>
